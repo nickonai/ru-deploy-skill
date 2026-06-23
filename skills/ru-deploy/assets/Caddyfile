@@ -1,0 +1,29 @@
+# Caddy reverse-proxy для проекта на Cloud.ru
+# Домен подставляется из переменной окружения DOMAIN (см. server-setup.sh).
+# Caddy сам получает и продлевает бесплатный HTTPS-сертификат Let's Encrypt,
+# как только DNS домена указывает на этот сервер.
+
+{$DOMAIN} {
+	encode gzip
+
+	# Запросы к Supabase API → Kong (контейнеры Supabase слушают порт 8000 на localhost)
+	@api path /rest/* /auth/* /storage/* /functions/* /realtime/* /graphql/*
+	handle @api {
+		reverse_proxy localhost:8000
+	}
+
+	# Всё остальное — статика фронтенда (SPA, маршрутизация на стороне клиента)
+	handle {
+		root * /var/www/app
+
+		# «Оболочка» приложения и service worker НЕ должны кэшироваться браузером,
+		# иначе после нового деплоя пользователь продолжает видеть старую сборку
+		# (а отладка идёт по кругу: «ошибка всё ещё есть», хотя фикс уже залит).
+		# Сами ассеты собираются Vite с хэшем в имени и кэшируются нормально.
+		@shell path /index.html / /sw.js /registerSW.js /manifest.webmanifest /manifest.json
+		header @shell Cache-Control "no-store, must-revalidate"
+
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -1,0 +1,19 @@
+# Секреты — никогда не коммитим (в репо только env.example с плейсхолдерами)
+.env
+.env.*
+!*.example
+*.key
+*.pem
+id_ed25519*
+id_rsa*
+
+# Системное
+.DS_Store
+Thumbs.db
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+__pycache__/
+temp.md
