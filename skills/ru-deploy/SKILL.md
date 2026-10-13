@@ -334,7 +334,7 @@ Caddy ставится и настраивается на шаге 2 и **сам
 Нужен, если в проекте есть сброс пароля или подтверждение email. **Полная пошаговая настройка Selectel (порты, логин, ошибка 535, безопасность ключа) — в `references/email-smtp.md`.** Кратко:
 
 1. Пользователь заводит почтовый ресурс **Selectel** (по умолчанию; 1000 писем/мес бесплатно), подтверждает домен через **TXT-запись** в DNS, добавляет SPF/DKIM/DMARC, берёт **числовой логин + API-key** из вкладки «Информация» ресурса.
-2. Ты прописываешь `SMTP_*` в `/opt/supabase/docker/.env` (хост `smtp.mail.selcloud.ru`, порт **1126** STARTTLS), пароль берёшь из `.ru-deploy/credentials.env` (не из чата: попроси пользователя самому вписать в этот файл строку `SELECTEL_SMTP_PASS=<ключ>` — так ключ не попадёт в переписку), и пересоздаёшь контейнер `auth` (`up -d --force-recreate auth` — иначе `SMTP_*` не подхватятся).
+2. Ты прописываешь `SMTP_*` в `/opt/supabase/docker/.env` (хост `smtp.mail.selcloud.ru`, порт **1126** STARTTLS), пароль берёшь из `.ru-deploy/credentials.env` (не из чата), и пересоздаёшь контейнер `auth` (`up -d --force-recreate auth` — иначе `SMTP_*` не подхватятся).
 3. Если API-key был засвечен (скриншот/чат) — **посоветуй перевыпустить** его в Selectel.
 4. По желанию — русские шаблоны писем (`assets/email-templates/`, как подключить — в справочнике).
 
@@ -346,7 +346,7 @@ Caddy ставится и настраивается на шаге 2 и **сам
 
 Нужен, если в проекте есть оплата. Подробно — `references/payments-yookassa.md`. Кратко:
 
-1. Пользователь в личном кабинете YooKassa берёт `shopId` и секретный ключ и **сам** вписывает их в `.ru-deploy/credentials.env` строками `YOOKASSA_SHOP_ID=<shopId>` и `YOOKASSA_SECRET_KEY=<ключ>` (секретный ключ в чат не присылать) → ты прописываешь `YOOKASSA_SHOP_ID` и `YOOKASSA_SECRET_KEY` в `/opt/supabase/docker/.env`.
+1. Пользователь в личном кабинете YooKassa берёт `shopId` и секретный ключ → ты прописываешь `YOOKASSA_SHOP_ID` и `YOOKASSA_SECRET_KEY` в `/opt/supabase/docker/.env`.
 2. В коде платёжной функции поменяй `return_url` со старого `*.lovable.app` на `https://<домен>/...`.
 3. Пользователь в кабинете YooKassa регистрирует URL уведомлений (вебхук): `https://<домен>/functions/v1/<имя-webhook-функции>`, события `payment.succeeded` и `payment.canceled`.
 4. Вебхук зовётся YooKassa **без токена**, а backend по умолчанию требует JWT. Пометка `// verify_jwt = false` в коде функции на self-hosted **не работает** (роутер её игнорирует). Добавь имя вебхук-функции в `PUBLIC_FUNCTIONS` в серверном `.env` и перезапусти функции — точечно, не снимая защиту с остальных (см. `references/backend-supabase.md` → «Публичные функции без JWT»).
