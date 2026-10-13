@@ -128,7 +128,7 @@ RU_HOST="$RU_HOST" RU_USER="$RU_USER" RU_PASS="$RU_PASS" bash "$SKILL_DIR/assets
 2. swap уже включён скриптом, а тяжёлые сервисы (`supavisor`, `realtime`, `analytics`, `vector`) `server-setup.sh` **и так не поднимает** — стек уже облегчён. Если памяти всё равно мало, проверь, что не запустились лишние: `RSH "cd /opt/supabase/docker && sudo docker compose ps --services --filter status=running"` — там не должно быть `supavisor`/`realtime`. Если есть — останови: `RSH "cd /opt/supabase/docker && sudo docker compose stop supavisor realtime"`.
 3. Крайний вариант — взять виртуалку с большим объёмом RAM.
 
-### Кончается место на диске (free-tier 30 ГБ)
+### Кончается место на диске (30 ГБ)
 1. Посмотри, что занимает: `RSH "bash ~/server-status.sh"` (раздел «Использование места»). Образы Supabase ~9 ГБ — это норма, не трогай.
 2. Безопасная чистка мусора (dangling-образы, build cache, раздувшиеся логи, apt-кэш — данные не трогаются): `RSH "bash ~/server-status.sh --clean"`.
 3. Если логи раздулись (старый сервер без лимита) — включи ротацию логов Docker:
