@@ -64,7 +64,7 @@ git clone https://github.com/nickonai/ru-deploy-skill.git /tmp/ru-deploy
 cp -r /tmp/ru-deploy/skills/ru-deploy ~/.codex/skills/ru-deploy
 ```
 
-(если ваша сборка Codex использует другой каталог скиллов — положите папку туда; структура `SKILL.md` + `references/` + `assets/` одинаковая).
+Codex CLI также находит скилл в `~/.agents/skills/ru-deploy` и в `.agents/skills/ru-deploy` внутри проекта (проверено на Codex CLI 0.166 командой `codex debug prompt-input`, без вызова модели). Структура `SKILL.md` + `references/` + `assets/` одинаковая; если ваша сборка использует другой каталог, положите папку туда.
 
 Скрипты из `assets/` и тексты из `references/` не зависят от агента — работают и там, и там.
 
@@ -100,8 +100,14 @@ ru-deploy/                            # репозиторий
 ├── LICENSE                           # MIT
 └── skills/
     └── ru-deploy/                    # ← сам скилл (копируется в каталог скиллов агента)
-        ├── SKILL.md                  # точка входа: протокол стадий, карта переезда, главные принципы
+        ├── SKILL.md                  # точка входа: протокол стадий, карта стадий, ворота подтверждения, правила безопасности
         ├── references/               # подробные справочники (агент читает по необходимости)
+        │   ├── access.md             #   доступы, sshpass, первый вход по SSH
+        │   ├── steps-a-b-inspect-server.md      # стадии A-B: осмотр, сервер (шаги 0-1)
+        │   ├── steps-c-backend.md               # стадия C: backend, миграции, функции (шаги 2-4)
+        │   ├── steps-d-frontend-domain.md       # стадия D: фронт и смена домена (шаги 5-6)
+        │   ├── steps-e-g-mail-payments-ai.md    # стадии E-G: почта, платежи, AI (шаги 7-9)
+        │   ├── operations.md         #   итоговая проверка, статус продакшена, место на диске
         │   ├── cloudru-setup.md      #   виртуалка, домен, DNS, HTTPS (+ бесплатный домен)
         │   ├── backend-supabase.md   #   self-hosted Supabase, миграции, edge-функции
         │   ├── email-smtp.md         #   почта/SMTP, SPF/DKIM/DMARC, русские шаблоны писем
